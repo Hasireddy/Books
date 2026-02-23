@@ -123,9 +123,8 @@ def validate_book(data):
 @app.route("/api/books", methods=['GET', 'POST'])
 @limiter.limit("10/minute")
 def handle_books():
-    app.logger.info('POST request received for /api/books')
-
     if request.method == 'POST':
+        app.logger.info('POST request received for /api/books')
         new_book = request.get_json()
         if not validate_book(new_book):
             return jsonify({"error": "Invalid book data"}), 400
