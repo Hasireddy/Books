@@ -1,3 +1,4 @@
+import logging
 from flask import Flask, jsonify, request
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -5,7 +6,8 @@ from flask_limiter.util import get_remote_address
 app = Flask(__name__)
 limiter = Limiter(app=app, key_func=get_remote_address)
 
-
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
 books = [
     {"id": 1, "title": "The Great Adventure 1", "author": "F. Scott Fitzgerald"},
@@ -121,6 +123,8 @@ def validate_book(data):
 @app.route("/api/books", methods=['GET', 'POST'])
 @limiter.limit("10/minute")
 def handle_books():
+    app.logger.info('POST request received for /api/books')
+
     if request.method == 'POST':
         new_book = request.get_json()
         if not validate_book(new_book):
@@ -133,6 +137,8 @@ def handle_books():
 
     else:
         #https://commandrisk-geminilittle-5000.codio.io/api/books?page=2&limit=10
+
+        app.logger.info('GET request received for /api/books')
         author = request.args.get('author')
         page = int(request.args.get('page', 1))
         limit = int(request.args.get('limit', 10))
@@ -159,6 +165,8 @@ def find_book_by_id(book_id):
 
 @app.route("/api/books/<int:id>", methods=['GET', 'PUT'])
 def update_book(id):
+    app.logger.info('PUT request received for /api/books')
+
     if request.method == 'PUT':
         book_to_update  = find_book_by_id(id)
 
@@ -187,6 +195,7 @@ def update_book(id):
 
 @app.route('/api/books/<int:id>', methods=['DELETE'])
 def delete_book(id):
+  app.logger.info('DELETE request received for /api/books')
   book_to_delete = find_book_by_id(id)
 
   if not book_to_delete:
