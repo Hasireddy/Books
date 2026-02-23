@@ -67,6 +67,19 @@ def update_book(id):
 
 
 
+@app.route('/api/books/<int:id>', methods=['DELETE'])
+def delete_book(id):
+  book_to_delete = find_book_by_id(id)
+
+  if not book_to_delete:
+    return jsonify({"error": "Book not found"}), 404
+
+  books.remove(book_to_delete)
+
+  return jsonify({"message": "Book deleted"}), 200
+
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
 
