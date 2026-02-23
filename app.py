@@ -76,7 +76,18 @@ def delete_book(id):
 
   books.remove(book_to_delete)
 
-  return jsonify({"message": "Book deleted"}), 200
+  return jsonify(book_to_delete), 200
+
+
+
+# ----- Global error handlers -----
+@app.errorhandler(404)
+def not_found_error(error):
+    return jsonify({"error": "Not Found"}), 404
+
+@app.errorhandler(405)
+def method_not_allowed_error(error):
+    return jsonify({"error": "Method Not Allowed"}), 405
 
 
 
