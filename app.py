@@ -26,16 +26,21 @@ def handle_books():
         return jsonify(new_book), 201
 
     else:
+        #https://commandrisk-geminilittle-5000.codio.io/api/books?page=2&limit=10
         author = request.args.get('author')
+        page = int(request.args.get('page', 1))
+        limit = int(request.args.get('limit', 10))
+
+        start_index = (page - 1) * limit
+        end_index = start_index + limit
 
         if author:
             filtered_books = [book for book in books if book['author'] == author]
             return jsonify(filtered_books)
 
-        return jsonify(books)
+        paginated_books = books[start_index:end_index]
 
-
-
+        return jsonify(paginated_books)
 
 
 
